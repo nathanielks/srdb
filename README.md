@@ -39,6 +39,10 @@ Licensed under the WTFPL. To view the WTFPL go to http://sam.zoy.org/wtfpl/
 (WARNING: it's a little rude, if you're sensitive);
 
 ###Changelog
+Version 3.0
+	- Command Line usage added by Nathaniel Schweinberg
+	- Removed deprecated functions
+
 Version 2.1.0:
 	- Changed to version 2.1.0 
 		* Following change by Sergei Biryukov - merged in and tested by Dave Coveney

@@ -56,34 +56,6 @@ function esc_html_attr( $string = '', $echo = false ){
 
 
 /**
- * Walk and array replacing one element for another. ( NOT USED ANY MORE )
- *
- * @param string $find    The string we want to replace.
- * @param string $replace What we'll be replacing it with.
- * @param array $data    Used to pass any subordinate arrays back to the
- * function for searching.
- *
- * @return array    The original array with the replacements made.
- */
-function recursive_array_replace( $find, $replace, $data ) {
-    if ( is_array( $data ) ) {
-        foreach ( $data as $key => $value ) {
-            if ( is_array( $value ) ) {
-                recursive_array_replace( $find, $replace, $data[ $key ] );
-            } else {
-                // have to check if it's string to ensure no switching to string for booleans/numbers/nulls - don't need any nasty conversions
-                if ( is_string( $value ) )
-					$data[ $key ] = str_replace( $find, $replace, $value );
-            }
-        }
-    } else {
-        if ( is_string( $data ) )
-			$data = str_replace( $find, $replace, $data );
-    }
-}
-
-
-/**
  * Take a serialised array and unserialise it replacing elements as needed and
  * unserialising any subordinate arrays and performing the replace on those too.
  *
@@ -126,24 +98,6 @@ function recursive_unserialize_replace( $from = '', $to = '', $data = '', $seria
 	}
 
 	return $data;
-}
-
-
-/**
- * Is the string we're dealing with a serialised string? ( NOT USED ANY MORE )
- *
- * @param string $data The string we want to check
- *
- * @return bool    true if serialised.
- */
-function is_serialized_string( $data ) {
-	// if it isn't a string, it isn't a serialized string
-	if ( !is_string( $data ) )
-		return false;
-	$data = trim( $data );
-	if ( preg_match( '/^s:[0-9]+:.*;$/s', $data ) ) // this should fetch all serialized strings
-		return true;
-	return false;
 }
 
 
@@ -327,6 +281,9 @@ function icit_srdb_define_find( $filename = 'wp-config.php' ) {
 	return array( $host, $name, $user, $pass, $char );
 }
 
+//Push cli php arguments into $_POST
+parse_str(implode('&', array_slice($argv, 1)), $_POST);
+
 /*
  Check and clean all vars, change the step we're at depending on the quality of
  the vars.
@@ -343,11 +300,14 @@ $data = isset( $_POST[ 'data' ] ) ? stripcslashes( $_POST[ 'data' ] ) : '';	// y
 $user = isset( $_POST[ 'user' ] ) ? stripcslashes( $_POST[ 'user' ] ) : '';	// your db userid
 $pass = isset( $_POST[ 'pass' ] ) ? stripcslashes( $_POST[ 'pass' ] ) : '';	// your db password
 $char = isset( $_POST[ 'char' ] ) ? stripcslashes( $_POST[ 'char' ] ) : '';	// your db charset
+
 // Search replace details
 $srch = isset( $_POST[ 'srch' ] ) ? stripcslashes( $_POST[ 'srch' ] ) : '';
 $rplc = isset( $_POST[ 'rplc' ] ) ? stripcslashes( $_POST[ 'rplc' ] ) : '';
+
 // Tables to scanned
 $tables = isset( $_POST[ 'tables' ] ) && is_array( $_POST[ 'tables' ] ) ? array_map( 'stripcslashes', $_POST[ 'tables' ] ) : array( );
+
 // Do we want to skip changing the guid column
 $guid = isset( $_POST[ 'guid' ] ) && $_POST[ 'guid' ] == 1 ? 1 : 0;
 $exclude_cols = array( 'guid' ); // Add columns to be excluded from changes to this array. If the GUID checkbox is ticked they'll be skipped.
@@ -361,7 +321,7 @@ if ( $loadwp && file_exists( dirname( __FILE__ ) . '/wp-config.php' ) )
 	list( $host, $data, $user, $pass, $char ) = icit_srdb_define_find( 'wp-config.php' );
 
 // Check the db connection else go back to step two.
-if ( $step >= 3 ) {
+if ( $step >= 3 || isset( $_POST['cli'] ) ) {
 	$connection = @mysql_connect( $host, $user, $pass );
 	if ( ! $connection ) {
 		$errors[] = mysql_error( );
@@ -388,17 +348,24 @@ if ( $step >= 3 ) {
 			$all_tables[] = $table[ 0 ];
 		}
 	}
+
+	if ( isset( $_POST['cli'] ) ){
+		$tables = $all_tables;
+	}
 }
 
 // Check and clean the tables array
 $tables = array_filter( $tables, 'check_table_array' );
-if ( $step >= 4 && empty( $tables ) ) {
-	$errors[] = 'You didn\'t select any tables.';
-	$step = 3;
+
+if ( $step >= 4 || isset( $_POST['cli'] ) ){
+	if ( empty($tables) ){
+		$errors[] = 'You didn\'t select any tables.';
+		$step = 3;
+	}
 }
 
 // Make sure we're searching for something.
-if ( $step >= 5 ) {
+if ( $step >= 5 || isset( $_POST['cli'] ) ) {
 	if ( empty( $srch ) ) {
 		$errors[] = 'Missing search string.';
 		$step = 4;
@@ -415,7 +382,33 @@ if ( $step >= 5 ) {
 	}
 }
 
+if ( isset( $_POST['cli'] ) ){
 
+	@ set_time_limit( 60 * 10 );
+	// Try to push the allowed memory up, while we're at it
+	@ ini_set( 'memory_limit', '1024M' );
+
+	// Process the tables
+	if ( isset( $connection ) )
+		$report = icit_srdb_replacer( $connection, $srch, $rplc, $tables );
+
+	// Calc the time taken.
+	$time = array_sum( explode( ' ', $report[ 'end' ] ) ) - array_sum( explode( ' ', $report[ 'start' ] ) );
+
+	echo 'Completed
+';
+	printf( 'In the process of replacing "%s" with "%s" we scanned %d tables with a total of %d rows, %d cells were changed and %d db update performed and it all took %f seconds.', $srch, $rplc, $report[ 'tables' ], $report[ 'rows' ], $report[ 'change' ], $report[ 'updates' ], $time );
+
+	if ( isset( $connection ) && $connection )
+		mysql_close( $connection );
+	if ( !empty($errors) ) {
+	echo '
+Errors: ';
+	print_r($errors);
+	}
+}
+
+if ( !isset( $_POST['cli'] ) ) {
 /*
  Send the HTML to the screen.
 */
@@ -750,3 +743,5 @@ if ( ini_get( 'safe_mode' ) ) {
 	</div>
 </body>
 </html>
+
+<?php }
