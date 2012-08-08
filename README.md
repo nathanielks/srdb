@@ -1,4 +1,4 @@
-#Safe Search and Replace on Database with Serialized Data v3.0
+#Safe Search and Replace on Database with Serialized Data v3.0.4
 
 This script is to solve the problem of doing database search and replace when
 developers have only gone and used the non-relational concept of serializing
