@@ -31,6 +31,10 @@ damage.
 First Written 2009-05-25 by David Coveney of Interconnect IT Ltd (UK)
 http://www.davidcoveney.com or http://www.interconnectit.com
 
+Thanks to moz667 at gmail dot com for his recursive_array_replace posted at
+uk.php.net which saved me a little time * a perfect sample for me
+and seems to work in all cases.
+
 ##License
 USE OF THIS SCRIPT IS ENTIRELY AT YOUR OWN RISK. I/We accept no liability
 from its use.
@@ -78,9 +82,3 @@ Version 1.0.2:
 * typos corrected, button text tweak * David Coveney / Robert O'Rourke
 Version 1.0.1
 * styling and form added by James R Whitehead.
-
-Credits:  moz667 at gmail dot com for his recursive_array_replace posted at
-uk.php.net which saved me a little time * a perfect sample for me
-and seems to work in all cases.
-
-
