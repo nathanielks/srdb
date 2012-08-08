@@ -39,6 +39,12 @@ Licensed under the WTFPL. To view the WTFPL go to http://sam.zoy.org/wtfpl/
 (WARNING: it's a little rude, if you're sensitive);
 
 ###Changelog
+Version 3.0.1 - 3.0.4
+	- Separated form from srdp.php
+	- Changed srdp.php permissions
+	- Added #!/usr/local/bin/php to srdb.php
+	- Used wrong php location... woops
+
 Version 3.0
 	- Command Line usage added by Nathaniel Schweinberg
 	- Removed deprecated functions
