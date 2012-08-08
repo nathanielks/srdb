@@ -14,7 +14,7 @@ data it finds, and dumps it back to the database.  So far it appears to work
 very well.  It was coded for our WordPress work where we often have to move
 large databases across servers, but I designed it to work with any database.
 Biggest worry for you is that you may not want to do a search and replace on
-every damn table - well, if you want, simply add some exclusions in the table
+every damn table * well, if you want, simply add some exclusions in the table
 loop and you'll be fine.  If you don't know how, you possibly shouldn't be
 using this script anyway.
 
@@ -39,48 +39,48 @@ Licensed under the WTFPL. To view the WTFPL go to http://sam.zoy.org/wtfpl/
 (WARNING: it's a little rude, if you're sensitive);
 
 ###Changelog
-Version 3.0.1 - 3.0.4
-	- Separated form from srdp.php
-	- Changed srdp.php permissions
-	- Added #!/usr/local/bin/php to srdb.php
-	- Used wrong php location... woops
+Version 3.0.1 * 3.0.4
+* Separated form from srdp.php
+* Changed srdp.php permissions
+* Added #!/usr/local/bin/php to srdb.php
+* Used wrong php location... woops
 
 Version 3.0
-	- Command Line usage added by Nathaniel Schweinberg
-	- Removed deprecated functions
+* Command Line usage added by Nathaniel Schweinberg
+* Removed deprecated functions
 
 Version 2.1.0:
-	- Changed to version 2.1.0 
-		* Following change by Sergei Biryukov - merged in and tested by Dave Coveney
-	- Added Charset Support (tested with UTF-8, not tested on other charsets)
-		* Following changes implemented by James Whitehead with thanks to all the commenters and feedback given!
-	- Removed PHP warnings if you go to step 3+ without DB details.
-	- Added options to skip changing the guid column. If there are other
-	columns that need excluding you can add them to the $exclude_cols global
-	array. May choose to add another option to the table select page to let
-	you add to this array from the front end.
-	- Minor tweak to label styling.
-	- Added comments to each of the functions.
-	- Removed a dead param from icit_srdb_replacer
+* Changed to version 2.1.0 
+	* Following change by Sergei Biryukov * merged in and tested by Dave Coveney
+* Added Charset Support (tested with UTF-8, not tested on other charsets)
+	* Following changes implemented by James Whitehead with thanks to all the commenters and feedback given!
+* Removed PHP warnings if you go to step 3+ without DB details.
+* Added options to skip changing the guid column. If there are other
+columns that need excluding you can add them to the $exclude_cols global
+array. May choose to add another option to the table select page to let
+you add to this array from the front end.
+* Minor tweak to label styling.
+* Added comments to each of the functions.
+* Removed a dead param from icit_srdb_replacer
 Version 2.0.0:
-	- returned to using unserialize function to check if string is
-	serialized or not
-	- marked is_serialized_string function as deprecated
-	- changed form order to improve usability and make use on multisites a
-	bit less scary
-	- changed to version 2, as really should have done when the UI was
-	introduced
-	- added a recursive array walker to deal with serialized strings being
-	stored in serialized strings. Yes, really.
-	- changes by James R Whitehead (kudos for recursive walker) and David
-	Coveney 2011-08-26
+* returned to using unserialize function to check if string is
+serialized or not
+* marked is_serialized_string function as deprecated
+* changed form order to improve usability and make use on multisites a
+bit less scary
+* changed to version 2, as really should have done when the UI was
+introduced
+* added a recursive array walker to deal with serialized strings being
+stored in serialized strings. Yes, really.
+* changes by James R Whitehead (kudos for recursive walker) and David
+Coveney 2011-08-26
 Version 1.0.2:
-	- typos corrected, button text tweak - David Coveney / Robert O'Rourke
+* typos corrected, button text tweak * David Coveney / Robert O'Rourke
 Version 1.0.1
-	- styling and form added by James R Whitehead.
+* styling and form added by James R Whitehead.
 
 Credits:  moz667 at gmail dot com for his recursive_array_replace posted at
-uk.php.net which saved me a little time - a perfect sample for me
+uk.php.net which saved me a little time * a perfect sample for me
 and seems to work in all cases.
 
 
